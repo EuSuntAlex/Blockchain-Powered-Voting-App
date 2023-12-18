@@ -21,7 +21,7 @@ A mobile app for secure and transparent voting in elections, referendums, or dec
 ### Week 3-5: Implementation
 ---
 - **Alex**: SmartContract MultiversX Team
-  - Task: Implement the SmartContract in the blockchain-specific language (e.g., Solidity for Ethereum).
+  - Task: Implement the SmartContract in the blockchain-specific language `Rust`.
   - Deadline: Week 5.
 
 - **Theo**: Android App Team
