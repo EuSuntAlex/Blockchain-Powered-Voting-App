@@ -1,0 +1,1 @@
+/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/target/debug/voting-meta: /home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/meta/src/main.rs /home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/src/voting.rs

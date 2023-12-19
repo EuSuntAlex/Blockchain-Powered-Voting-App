@@ -1,0 +1,1 @@
+/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/target/wasm32-unknown-unknown/release/voting_wasm.wasm: /home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/src/voting.rs /home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/wasm/src/lib.rs

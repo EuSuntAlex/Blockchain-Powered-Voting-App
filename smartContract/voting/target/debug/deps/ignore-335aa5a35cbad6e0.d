@@ -1,0 +1,12 @@
+/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/target/debug/deps/ignore-335aa5a35cbad6e0.rmeta: /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/lib.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/default_types.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/dir.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/gitignore.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/overrides.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/pathutil.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/types.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/walk.rs
+
+/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/target/debug/deps/ignore-335aa5a35cbad6e0.d: /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/lib.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/default_types.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/dir.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/gitignore.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/overrides.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/pathutil.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/types.rs /home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/walk.rs
+
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/lib.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/default_types.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/dir.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/gitignore.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/overrides.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/pathutil.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/types.rs:
+/home/alex/.cargo/registry/src/index.crates.io-6f17d22bba15001f/ignore-0.4.21/src/walk.rs:
