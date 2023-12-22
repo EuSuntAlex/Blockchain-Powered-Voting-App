@@ -3,7 +3,6 @@
 multiversx_sc::imports!();
 #[multiversx_sc::contract]
 
-
 pub trait Voting {
     #[init]
     fn init(&self, voting_deadline: u64, no_of_options: u64) {
@@ -43,13 +42,22 @@ pub trait Voting {
     }
     
 
-
-
-
-
-    // funct for getting the result only after the voting aka deadline is done
+    // funct for getting the result only after the voting aka deadline is done. de adaugat daca
+    // la final exista 2 max-uri
     #[endpoint]
-    fn calculate_result(&self){}
+    fn calculate_result(&self){
+        let round = self.blockchain().get_block_round();
+        let ddl = self.deadline().get();
+        require!(ddl < round , "Voting still going!");
+        let it = self.voting_status();
+        let mut max_value = 0;
+        for v in it.iter(){ 
+           if v > max_value {
+               max_value = v;
+           } 
+        }
+
+    }
 
     // returns the deadline date
     #[view(getDeadline)]
@@ -66,7 +74,7 @@ pub trait Voting {
     // returns the options names
     #[view(getNames)]
     #[storage_mapper("names")]
-    fn names(&self) -> VecMapper<Vec<u8>>;
+    fn names(&self) -> VecMapper<u8>;
 
 
     // returns participants that voted
@@ -79,5 +87,9 @@ pub trait Voting {
     #[view(getStatus)]
     #[storage_mapper("voting_status")]
     fn voting_status(&self) -> VecMapper<u64>;
+
+    #[view(getResult)]
+    #[storage_mapper("result")]
+    fn result(&self) -> SingleValueMapper<u64>;
 }
 
