@@ -22,6 +22,11 @@ vote() {
     mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments 1  --send --proxy=${PROXY} --chain=T
 }
 
+result() {
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="calculate_result"  --send --proxy=${PROXY} --chain=T
+}
+ 
+
 query() {
     mxpy  contract query ${ADDRESS} --function=$1 --proxy=${PROXY}
 }

@@ -45,3 +45,11 @@ A mobile app for secure and transparent voting in elections, referendums, or dec
 - **Both**: Database Team
   - Task: Verify the security and integrity of the encrypted database.
   - Deadline: Week 6.
+
+
+### ./clean.sh
+removes the output directory
+
+### ./testnet.snippets.sh 
+script to deploy and call function. 
+Disclamer: after deploy run the script again with '. ./testnet.snippets.sh' so that the address is updated.

@@ -10,7 +10,7 @@ pub trait Voting {
         self.deadline().set(voting_deadline + round);
         self.number_of_options().set(no_of_options);
         for _i in 1..(1 + no_of_options){
-           self.voting_status().push(&0); 
+           self.voting_status().push_back(0); 
         }
     }
     
@@ -35,9 +35,15 @@ pub trait Voting {
         require!(ddl > round , "Voting closed, ddl reached!");
         require!(self.number_of_options().get() >= voting_value , "Voting number too high!");
         require!(voting_value > 0 , "Voting number too low!");
-        let last_voting_value: usize = voting_value as usize;
-        let original_value = self.voting_status().get(last_voting_value);
-        self.voting_status().set(last_voting_value, &(original_value + 1));
+        let original_value = self.voting_status().get_node_by_id(voting_value as u32);
+        match original_value {
+            Some(node) => {
+                let v = node.into_value();
+                self.voting_status().set_node_value_by_id(voting_value as u32, v + 1);
+            }
+            None => {}
+        }
+        
         self.participants().insert(caller);
     }
     
@@ -49,15 +55,25 @@ pub trait Voting {
         let round = self.blockchain().get_block_round();
         let ddl = self.deadline().get();
         require!(ddl < round , "Voting still going!");
-        let it = self.voting_status();
-        let mut max_value = 0;
-        for v in it.iter(){ 
-           if v > max_value {
-               max_value = v;
-           } 
-        }
+
 
     }
+    
+    // resets the voting app
+    // 
+    #[only_owner]
+    #[endpoint]
+    fn reset_vote(&self, voting_deadline: u64, no_of_options: u64) {
+        
+        self.deadline().set(voting_deadline);
+        self.number_of_options().set(no_of_options);
+        self.participants().clear();
+        self.voting_status().clear();
+        self.names().clear();
+
+
+    }
+
 
     // returns the deadline date
     #[view(getDeadline)]
@@ -86,7 +102,7 @@ pub trait Voting {
     // returns voting status
     #[view(getStatus)]
     #[storage_mapper("voting_status")]
-    fn voting_status(&self) -> VecMapper<u64>;
+    fn voting_status(&self) -> LinkedListMapper<u64>;
 
     #[view(getResult)]
     #[storage_mapper("result")]
