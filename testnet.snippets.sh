@@ -5,7 +5,7 @@ PROXY=https://testnet-api.multiversx.com
 PROJECT=/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/output/voting.wasm
 
 deploy() {
-    DEPLOY_RESULT=$(mxpy  contract deploy --bytecode=${PROJECT} --recall-nonce --pem=${WALLET} --gas-limit=50000000 --arguments 100 2 --metadata-payable --send --proxy=${PROXY} --chain=T || return)
+    DEPLOY_RESULT=$(mxpy  contract deploy --bytecode=${PROJECT} --recall-nonce --pem=${WALLET} --gas-limit=50000000 --arguments 7 2 --metadata-payable --send --proxy=${PROXY} --chain=T || return)
     echo "DEPLOY_RESULT: ${DEPLOY_RESULT}"
     echo "${DEPLOY_RESULT}" | grep -oP '(?<="contractAddress": ")[^"]+' > "${ADDRESS_FILE}"
 }
@@ -19,13 +19,16 @@ values() {
 }
 
 vote() {
-    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments 1  --send --proxy=${PROXY} --chain=T
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments $1  --send --proxy=${PROXY} --chain=T
 }
 
 result() {
     mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="calculate_result"  --send --proxy=${PROXY} --chain=T
 }
- 
+
+reset_sc() {
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="reset_vote" --arguments 10 2  --send --proxy=${PROXY} --chain=T
+}
 
 query() {
     mxpy  contract query ${ADDRESS} --function=$1 --proxy=${PROXY}
