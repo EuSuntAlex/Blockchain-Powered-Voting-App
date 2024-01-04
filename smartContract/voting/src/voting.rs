@@ -34,16 +34,16 @@ pub trait Voting {
     } 
     /// Func pentru votare - ar trebui sa verifice dac persoana a votat deja
     #[endpoint]
-    fn vote(&self, voting_value: u64){
+    fn vote(&self, voting_index: u64){
         let caller = self.blockchain().get_caller();
         require!(!self.participants().contains(&caller), "You have already voted!");
         //check deadline
         let round = self.blockchain().get_block_round();
         let ddl = self.deadline().get();
-        require!(ddl > round , "Voting closed, ddl reached!");
-        require!(self.number_of_options().get() >= voting_value , "Voting number too high!");
-        require!(voting_value > 0 , "Voting number too low!");
-        let original_value = self.voting_status().get_node_by_id(voting_value as u32);
+//        require!(ddl > round , "Voting closed, ddl reached!");
+        require!(self.number_of_options().get() >= voting_index , "Voting number too high!");
+        require!(voting_index > 0 , "Voting number too low!");
+        let original_value = self.voting_status().get_node_by_id(voting_index as u32);
         let mut voting_value = 1;
         if self.vip().contains_key(&caller) { // if the user is a super voter, hist vote counts
             // more
@@ -59,7 +59,7 @@ pub trait Voting {
         match original_value {
             Some(node) => {
                 let v = node.into_value();
-                self.voting_status().set_node_value_by_id(voting_value as u32, v + voting_value);
+                self.voting_status().set_node_value_by_id(voting_index as u32, v + voting_value);
             }
             None => {}
         }
@@ -73,7 +73,7 @@ pub trait Voting {
     fn calculate_result(&self){
         let round = self.blockchain().get_block_round();
         let ddl = self.deadline().get();
-        //require!(ddl < round , "Voting still going!");
+//        require!(ddl < round , "Voting still going!");
         let mut i = 0;
         let mut max = 0;
         let mut indx = 0;
@@ -83,7 +83,6 @@ pub trait Voting {
         for v in  node_it{
             i = i + 1; // for keeping track of possition
             let value = v.get_value_cloned(); //get value
-            sc_print!("{}", value);
             if value > max {
                 max = value;
                 indx = i;
@@ -92,7 +91,6 @@ pub trait Voting {
                apparitions += 1; 
             } 
         }
-        sc_print!("max {} indx {} i {}", max, indx, i);
         if apparitions != 1 {
             self.result().set(u64::MAX);
         } else {
@@ -111,7 +109,11 @@ pub trait Voting {
         self.participants().clear();
         self.voting_status().clear();
         self.names().clear();
-
+        self.vip().clear();
+        self.result().clear();
+        for _i in 1..(1 + no_of_options){
+           self.voting_status().push_back(0); 
+        }
 
     }
 
