@@ -5,7 +5,7 @@ PROXY=https://testnet-api.multiversx.com
 PROJECT=/home/alex/Desktop/Blockchain-Powered-Voting-App/smartContract/voting/output/voting.wasm
 
 deploy() {
-    DEPLOY_RESULT=$(mxpy  contract deploy --bytecode=${PROJECT} --recall-nonce --pem=${WALLET} --gas-limit=50000000 --arguments 7 4 --metadata-payable --send --proxy=${PROXY} --chain=T || return)
+    DEPLOY_RESULT=$(mxpy  contract deploy --bytecode=${PROJECT} --recall-nonce --pem=${WALLET} --gas-limit=50000000  --metadata-payable --send --proxy=${PROXY} --chain=T || return)
     echo "DEPLOY_RESULT: ${DEPLOY_RESULT}"
     echo "${DEPLOY_RESULT}" | grep -oP '(?<="contractAddress": ")[^"]+' > "${ADDRESS_FILE}"
 }
@@ -13,15 +13,21 @@ deploy() {
 ADDRESS=$(cat "${ADDRESS_FILE}")
 
 
+create() {
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=90000000 --function="create_vote" --arguments 0x0a 0x06 0x466163656d20637572733f  --send --proxy=${PROXY} --chain=T
+}
 
 values() {
-    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="set_values"  --send --proxy=${PROXY} --chain=T
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="set_values" --arguments 0x466163656d20637572733f  --send --proxy=${PROXY} --chain=T
 }
 
 vote() {
-    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments $1  --send --proxy=${PROXY} --chain=T
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments $1 0x466163656d20637572733f --send --proxy=${PROXY} --chain=T
 }
 
+vote2() {
+    mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="vote" --arguments $1 0x466163656d20636163613f --send --proxy=${PROXY} --chain=T
+}
 result() {
     mxpy  contract call ${ADDRESS} --recall-nonce --pem=${WALLET} --gas-limit=5000000 --function="calculate_result"  --send --proxy=${PROXY} --chain=T
 }
@@ -35,7 +41,7 @@ add() {
 }
 
 query() {
-    mxpy  contract query ${ADDRESS} --function=$1 --proxy=${PROXY}
+    mxpy  contract query ${ADDRESS} --function=$1 --arguments 0x466163656d20637572733f  --proxy=${PROXY}
 }
 upgradeSC() {
     mxpy --verbose contract upgrade ${ADDRESS} --recall-nonce --metadata-payable \
