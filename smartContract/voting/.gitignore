@@ -1,0 +1,27 @@
+/output
+/meta
+/target
+../../dapp/node_modules
+../../dapp/.pnp
+../../dapp/.pnp.js
+
+# testing
+../../dapp/coverage
+
+# production
+../../dapp/build
+
+# misc
+../../dapp/.DS_Store
+../../dapp/.idea
+../../dapp/.env.local
+../../dapp/.env.development.local
+../../dapp/.env.test.local
+../../dapp/.env.production.local
+
+../../dapp/npm-debug.log*
+../../dapp/yarn-debug.log*
+../../dapp/yarn-error.log*
+
+../../dapp/.yalc
+../../dapp/yalc.lock

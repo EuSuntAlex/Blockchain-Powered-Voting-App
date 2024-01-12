@@ -1,0 +1,15 @@
+{
+    "contract":{
+        "deploy":{
+            "verbose": true,
+            "proxy": "https://testnet-api.multiversx.com",
+            "bytecode": "output/voting.wasm",
+            "recall-nonce": true,
+            "pem": "../../wallet/wallet.pem",
+            "gas-limit": 60000000,
+            "arguments": [100, 6],
+            "send": true,
+            "outfile": "deploy-testnet.interaction.json"
+        }
+     }
+}
