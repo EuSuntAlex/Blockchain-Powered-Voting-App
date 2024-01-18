@@ -16,6 +16,7 @@ import DatePicker from 'react-datepicker';
 import Modal from 'react-modal';
 import { contractAddress } from 'config';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useGetAccountInfo } from '@multiversx/sdk-dapp/hooks';
 
 const modalStyles = {
   content: {
@@ -43,14 +44,6 @@ function decimalToHexadecimal(decimalStr: string): string {
   } else return '0' + hexadecimalValue;
 }
 
-function convertToEGLD(input: number): string {
-  // Multiply the input by 10^18
-  const result = input * Math.pow(10, 18);
-
-  // Convert the result to a string
-  return result.toString();
-}
-
 function stringToHex(input: string | undefined): string {
   if (input === undefined) {
     return '';
@@ -70,14 +63,9 @@ const CreateVoteModal: React.FC<{
     // arg4: string
   ) => void;
 }> = ({ isOpen, onClose, onCreateVote }) => {
-  const [input1, setInput1] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [input2, setInput2] = useState('');
   const [input3, setInput3] = useState('');
-  // const [selectedDate, setSelectedDate] = useState<Date | null>(null); // State to store the selected date
-
-  const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInput1(e.target.value);
-  };
 
   const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput2(e.target.value);
@@ -89,31 +77,26 @@ const CreateVoteModal: React.FC<{
 
   const handleCreateVote = () => {
     // Convert user inputs to hexadecimal
-    const arg1Hex = decimalToHexadecimal(input1);
     const arg2Hex = decimalToHexadecimal(input2);
-
     const arg3Hex = stringToHex(input3);
-    // if (selectedDate === null) {
-    //   const currentTimestampInSeconds: number = Math.floor(
-    //     new Date().getTime() / 1000
-    //   );
-    //   const arg4Hex = decimalToHexadecimal(
-    //     currentTimestampInSeconds.toString()
-    //   );
-    //   // Call the function with user inputs as arguments
-    //   onCreateCollection(arg1Hex, arg2Hex, arg3Hex, arg4Hex);
-    // } else {
-    //   const currentTimestampInSeconds: number = Math.floor(
-    //     selectedDate.getTime() / 1000
-    //   );
-    //   const arg4Hex = decimalToHexadecimal(
-    //     currentTimestampInSeconds.toString()
-    //   );
-    //   // Call the function with user inputs as arguments
-    //   onCreateCollection(arg1Hex, arg2Hex, arg3Hex, arg4Hex);
-    // }
 
-    // Close the modal
+    if (selectedDate === null) {
+      const currentTimestampInSeconds: number = Math.floor(
+        new Date().getTime() / 1000
+      );
+      const arg1Hex = decimalToHexadecimal(
+        currentTimestampInSeconds.toString()
+      );
+      onCreateVote(arg1Hex, arg2Hex, arg3Hex);
+    } else {
+      const currentTimestampInSeconds: number = Math.floor(
+        selectedDate.getTime() / 1000
+      );
+      const arg1Hex = decimalToHexadecimal(
+        currentTimestampInSeconds.toString()
+      );
+      onCreateVote(arg1Hex, arg2Hex, arg3Hex);
+    }
     onClose();
   };
 
@@ -135,20 +118,14 @@ const CreateVoteModal: React.FC<{
         onChange={handleInputChange2}
         maxLength={10}
       />
-      <input
-        type='text'
-        placeholder='Enter Deadline'
-        value={input1}
-        onChange={handleInputChange1}
-      />
 
       {/* Date Picker */}
-      {/* <DatePicker
+      <DatePicker
         selected={selectedDate}
         onChange={(date: Date | null) => setSelectedDate(date)}
         dateFormat='MM/dd/yyyy'
         placeholderText='Select Date'
-      /> */}
+      />
 
       <button onClick={handleCreateVote}>Create Vote</button>
       <button onClick={onClose}>Cancel</button>
@@ -243,128 +220,114 @@ const ResultModal: React.FC<{
   );
 };
 
-// const EndModal: React.FC<{
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onEndEvent: (arg1: string) => void;
-// }> = ({ isOpen, onClose, onEndEvent }) => {
-//   const [input1, setInput1] = useState('');
+const VipSomebodyModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSetVip: (arg1: string, arg2: string, arg3: string) => void;
+}> = ({ isOpen, onClose, onSetVip }) => {
+  const [input1, setInput1] = useState('');
+  const [input2, setInput2] = useState('');
+  const [input3, setInput3] = useState('');
 
-//   const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setInput1(e.target.value);
-//   };
+  const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput1(e.target.value);
+  };
 
-//   const handleEndEvent = () => {
-//     // Convert user inputs to hexadecimal
-//     const arg1Hex = stringToHex(input1);
-//     onEndEvent(arg1Hex);
+  const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput2(e.target.value);
+  };
 
-//     // Close the modal
-//     onClose();
-//   };
+  const handleInputChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput3(e.target.value);
+  };
 
-//   return (
-//     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-//       <h2>End the Event</h2>
-//       <input
-//         type='text'
-//         placeholder='Enter Event Name'
-//         value={input1}
-//         onChange={handleInputChange1}
-//         maxLength={20}
-//         minLength={3}
-//       />
-//       <button onClick={handleEndEvent}>End Event</button>
-//       <button onClick={onClose}>Cancel</button>
-//     </Modal>
-//   );
-// };
+  const handleSetVip = () => {
+    const arg2Hex = decimalToHexadecimal(input2);
+    const arg3Hex = stringToHex(input3);
+    const arg1Hex = Address.fromBech32(input1).hex();
 
-// const CancelModal: React.FC<{
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onCancelEvent: (arg1: string) => void;
-// }> = ({ isOpen, onClose, onCancelEvent }) => {
-//   const [input1, setInput1] = useState('');
+    onSetVip(arg1Hex, arg2Hex, arg3Hex);
+    // Close the modal
+    onClose();
+  };
 
-//   const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setInput1(e.target.value);
-//   };
+  return (
+    <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
+      <h2>Vip Somebody</h2>
+      <input
+        type='text'
+        placeholder='Enter VIP Address'
+        value={input1}
+        onChange={handleInputChange1}
+        maxLength={63}
+        minLength={63}
+      />
+      <input
+        type='text'
+        placeholder='Enter voting power'
+        value={input2}
+        onChange={handleInputChange2}
+      />
+      <input
+        type='text'
+        placeholder='Enter vote'
+        value={input3}
+        onChange={handleInputChange3}
+      />
+      <button onClick={handleSetVip}>Set VIP</button>
+      <button onClick={onClose}>Cancel</button>
+    </Modal>
+  );
+};
 
-//   const handleCancelEvent = () => {
-//     // Convert user inputs to hexadecimal
-//     const arg1Hex = stringToHex(input1);
-//     onCancelEvent(arg1Hex);
+const VipYourselfModal: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onSetVip2: (arg1: string, arg2: string, arg3: string) => void;
+}> = ({ isOpen, onClose, onSetVip2 }) => {
+  const [input2, setInput2] = useState('');
+  const [input3, setInput3] = useState('');
 
-//     // Close the modal
-//     onClose();
-//   };
+  const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput2(e.target.value);
+  };
 
-//   return (
-//     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-//       <h2>Cancel Event</h2>
-//       <input
-//         type='text'
-//         placeholder='Enter Event Name'
-//         value={input1}
-//         onChange={handleInputChange1}
-//         maxLength={20}
-//         minLength={3}
-//       />
-//       <button onClick={handleCancelEvent}>CancelEvent</button>
-//       <button onClick={onClose}>Cancel</button>
-//     </Modal>
-//   );
-// };
+  const handleInputChange3 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput3(e.target.value);
+  };
+  const handleSetVip2 = () => {
+    const arg2Hex = decimalToHexadecimal(input2);
+    const arg3Hex = stringToHex(input3);
+    // const arg1Hex = Address.fromBech32(useGetAccountInfo().address).hex();
+    const arg1Hex = Address.fromBech32(
+      'erd17634f97cgpvh7qqgtg2gvz9w95n75ytmhj9kf4rnt4r5wd3xfgdq049xwu'
+    ).hex();
 
-// const ValidateModal: React.FC<{
-//   isOpen: boolean;
-//   onClose: () => void;
-//   onValidateNFT: (arg1: string, arg2: string) => void;
-// }> = ({ isOpen, onClose, onValidateNFT }) => {
-//   const [input1, setInput1] = useState('');
-//   const [input2, setInput2] = useState('');
+    onSetVip2(arg1Hex, arg2Hex, arg3Hex);
+    // Close the modal
+    onClose();
+  };
 
-//   const handleInputChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setInput1(e.target.value);
-//   };
-
-//   const handleInputChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setInput2(e.target.value);
-//   };
-
-//   const handleValidateNFT = () => {
-//     // Convert user inputs to hexadecimal
-//     const arg1Hex = stringToHex(input1);
-//     const arg2Hex = decimalToHexadecimal(input2);
-
-//     onValidateNFT(arg1Hex, arg2Hex);
-//     // Close the modal
-//     onClose();
-//   };
-
-//   return (
-//     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-//       <h2>Validate Ticket</h2>
-//       <input
-//         type='text'
-//         placeholder='Enter Event Name'
-//         value={input1}
-//         onChange={handleInputChange1}
-//         maxLength={20}
-//         minLength={3}
-//       />
-//       <input
-//         type='text'
-//         placeholder='Enter Ticket Number (Nonce)'
-//         value={input2}
-//         onChange={handleInputChange2}
-//       />
-//       <button onClick={handleValidateNFT}>Validate Ticket</button>
-//       <button onClick={onClose}>Cancel</button>
-//     </Modal>
-//   );
-// };
+  return (
+    <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
+      <h2>Vip Yourself</h2>
+      <input
+        type='text'
+        placeholder='Enter voting power'
+        value={input2}
+        onChange={handleInputChange2}
+      />
+      <input
+        type='text'
+        placeholder='Enter vote'
+        value={input2}
+        onChange={handleInputChange3}
+      />
+      <button onClick={handleSetVip2}>Set VIP</button>
+      <button onClick={onClose}>Cancel</button>
+    </Modal>
+  );
+};
 
 export const Actions = () => {
   const /*transactionSessionId*/ [, setTransactionSessionId] = useState<
@@ -374,10 +337,8 @@ export const Actions = () => {
   const [isFirstModalOpen, setFirstModalOpen] = useState(false);
   const [isSecondModalOpen, setSecondModalOpen] = useState(false);
   const [isThirdModalOpen, setThirdModalOpen] = useState(false);
-  // const [isForthModalOpen, setForthModalOpen] = useState(false);
-  // const [isFifthModalOpen, setFifthModalOpen] = useState(false);
-  // const [isSixthModalOpen, setSixthModalOpen] = useState(false);
-  // const [isSeventhModalOpen, setSeventhModalOpen] = useState(false);
+  const [isForthModalOpen, setForthModalOpen] = useState(false);
+  const [isFifthModalOpen, setFifthModalOpen] = useState(false);
 
   const openFirstModal = () => setFirstModalOpen(true);
   const closeFirstModal = () => setFirstModalOpen(false);
@@ -388,24 +349,13 @@ export const Actions = () => {
   const openThirdModal = () => setThirdModalOpen(true);
   const closeThirdModal = () => setThirdModalOpen(false);
 
-  // const openForthModal = () => setForthModalOpen(true);
-  // const closeForthModal = () => setForthModalOpen(false);
+  const openForthModal = () => setForthModalOpen(true);
+  const closeForthModal = () => setForthModalOpen(false);
 
-  // const openFifthModal = () => setFifthModalOpen(true);
-  // const closeFifthModal = () => setFifthModalOpen(false);
+  const openFifthModal = () => setFifthModalOpen(true);
+  const closeFifthModal = () => setFifthModalOpen(false);
 
-  // const openSixthModal = () => setSixthModalOpen(true);
-  // const closeSixthModal = () => setSixthModalOpen(false);
-
-  // const openSeventhModal = () => setSeventhModalOpen(true);
-  // const closeSeventhModal = () => setSeventhModalOpen(false);
-
-  const createVote = async (
-    arg1: string,
-    arg2: string,
-    arg3: string
-    // arg4: string
-  ) => {
+  const createVote = async (arg1: string, arg2: string, arg3: string) => {
     const CreateVoteTransaction = {
       value: '0',
       data: 'create_vote@' + arg1 + '@' + arg2 + '@' + arg3,
@@ -451,52 +401,28 @@ export const Actions = () => {
     }
   };
 
-  // const buyTicket = async (arg1: string, arg2: string) => {
-  //   const buyTransaction = {
-  //     value: arg2,
-  //     data: 'buy_ticket' + '@' + arg1,
-  //     receiver: contractAddress,
-  //     gasLimit: '600000000'
-  //   };
-  //   await refreshAccount();
+  const setVip = async (arg1: string, arg2: string, arg3: string) => {
+    const Vip2Transaction = {
+      value: '0',
+      data: 'add_vip' + '@' + arg1 + '@' + arg2 + '@' + arg3,
+      receiver: contractAddress,
+      gasLimit: '600000000'
+    };
+    await refreshAccount();
 
-  //   const { sessionId /*, error*/ } = await sendTransactions({
-  //     transactions: buyTransaction,
-  //     transactionsDisplayInfo: {
-  //       processingMessage: 'Processing The Transaction',
-  //       errorMessage: 'An error has occured during the buying process',
-  //       successMessage: 'Ticket bought successfully'
-  //     },
-  //     redirectAfterSign: false
-  //   });
-  //   if (sessionId != null) {
-  //     setTransactionSessionId(sessionId);
-  //   }
-  // };
-
-  // const validate = async (arg1: string, arg2: string) => {
-  //   const validateTransaction = {
-  //     value: '0',
-  //     data: 'validate' + '@' + arg1 + '@' + arg2,
-  //     receiver: contractAddress,
-  //     gasLimit: '600000000'
-  //   };
-
-  //   await refreshAccount();
-
-  //   const { sessionId /*, error*/ } = await sendTransactions({
-  //     transactions: validateTransaction,
-  //     transactionsDisplayInfo: {
-  //       processingMessage: 'Processing Validation',
-  //       errorMessage: 'An error has occured during Validation',
-  //       successMessage: 'Participant Validation Successful'
-  //     },
-  //     redirectAfterSign: false
-  //   });
-  //   if (sessionId != null) {
-  //     setTransactionSessionId(sessionId);
-  //   }
-  // };
+    const { sessionId /*, error*/ } = await sendTransactions({
+      transactions: Vip2Transaction,
+      transactionsDisplayInfo: {
+        processingMessage: 'Processing The Transaction',
+        errorMessage: 'An error has occured during the Transaction',
+        successMessage: 'VIP set Successfuly'
+      },
+      redirectAfterSign: false
+    });
+    if (sessionId != null) {
+      setTransactionSessionId(sessionId);
+    }
+  };
 
   const Result = async (arg1: string) => {
     const endEventTransaction = {
@@ -520,75 +446,6 @@ export const Actions = () => {
       setTransactionSessionId(sessionId);
     }
   };
-
-  // const cancelEvent = async (arg1: string) => {
-  //   const cancelEventTransaction = {
-  //     value: '0',
-  //     data: 'cancel_event' + '@' + arg1,
-  //     receiver: contractAddress,
-  //     gasLimit: '600000000'
-  //   };
-  //   await refreshAccount();
-
-  //   const { sessionId /*, error*/ } = await sendTransactions({
-  //     transactions: cancelEventTransaction,
-  //     transactionsDisplayInfo: {
-  //       processingMessage: 'Finishing Event',
-  //       errorMessage: 'An error has occured while canceling the event',
-  //       successMessage: 'Event Canceled Successfully'
-  //     },
-  //     redirectAfterSign: false
-  //   });
-  //   if (sessionId != null) {
-  //     setTransactionSessionId(sessionId);
-  //   }
-  // };
-
-  // const Refund = async (arg1: string) => {
-  //   // const c_address = Address.fromBech32(contractAddress);
-  //   // const refundTransaction = {
-  //   //   sender: 'erd17634f97cgpvh7qqgtg2gvz9w95n75ytmhj9kf4rnt4r5wd3xfgdq049xwu',
-  //   //   value: '0',
-  //   //   data:
-  //   //     'ESDTNFTTransfer' +
-  //   //     '@' +
-  //   //     '5453542d303630383330' +
-  //   //     '@' +
-  //   //     '0a' +
-  //   //     '@' +
-  //   //     '01' +
-  //   //     '@' +
-  //   //     c_address +
-  //   //     '@' +
-  //   //     '726566756e64' +
-  //   //     '@' +
-  //   //     arg1,
-
-  //   //   receiver:
-  //   //     'erd17634f97cgpvh7qqgtg2gvz9w95n75ytmhj9kf4rnt4r5wd3xfgdq049xwu',
-  //   //   gasLimit: '600000000'
-  //   // };
-  //   const refundTransaction = {
-  //     value: '0',
-  //     data: 'refund' + '@' + arg1,
-  //     receiver: contractAddress,
-  //     gasLimit: '600000000'
-  //   };
-  //   await refreshAccount();
-
-  //   const { sessionId /*, error*/ } = await sendTransactions({
-  //     transactions: refundTransaction,
-  //     transactionsDisplayInfo: {
-  //       processingMessage: 'processing Refund',
-  //       errorMessage: 'An error has occured while processing the refund',
-  //       successMessage: 'Ticket Refunded Successfully'
-  //     },
-  //     redirectAfterSign: false
-  //   });
-  //   if (sessionId != null) {
-  //     setTransactionSessionId(sessionId);
-  //   }
-  // };
 
   return (
     <div className='d-flex mt-4 justify-content-center'>
@@ -620,11 +477,37 @@ export const Actions = () => {
       </div>
       <div className='p-1 action-btn'>
         <button onClick={openThirdModal}>
+          <FontAwesomeIcon icon={faPlus} className='text-primary' />
+        </button>
+        <VipYourselfModal
+          isOpen={isThirdModalOpen}
+          onClose={closeThirdModal}
+          onSetVip2={setVip}
+        />
+        <a href='/' className='text-white text-decoration-none'>
+          VIP Yourself
+        </a>
+      </div>
+      <div className='p-1 action-btn'>
+        <button onClick={openForthModal}>
+          <FontAwesomeIcon icon={faPlus} className='text-primary' />
+        </button>
+        <VipSomebodyModal
+          isOpen={isForthModalOpen}
+          onClose={closeForthModal}
+          onSetVip={setVip}
+        />
+        <a href='/' className='text-white text-decoration-none'>
+          VIP Somebody
+        </a>
+      </div>
+      <div className='p-1 action-btn'>
+        <button onClick={openFifthModal}>
           <FontAwesomeIcon icon={faUserCheck} className='text-primary' />
         </button>
         <ResultModal
-          isOpen={isThirdModalOpen}
-          onClose={closeThirdModal}
+          isOpen={isFifthModalOpen}
+          onClose={closeFifthModal}
           onResult={Result}
         />
         <a href='/' className='text-white text-decoration-none'>

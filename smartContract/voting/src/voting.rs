@@ -14,8 +14,8 @@ pub trait Voting {
     #[endpoint]
     fn create_vote(&self, voting_deadline: u64, no_of_options: u64, vote_name: &ManagedBuffer) {
         require!(!self.voting_names().contains(vote_name), "Vote name taken");
-        let round = self.blockchain().get_block_round();
-        self.deadline(vote_name.clone()).set(voting_deadline + round);
+        //let round = self.blockchain().get_block_round();
+        self.deadline(vote_name.clone()).set(voting_deadline);
         self.number_of_options(vote_name.clone()).set(no_of_options);
         for _i in 1..(1 + no_of_options){
            self.voting_status(vote_name.clone()).push_back(0); 
@@ -24,9 +24,14 @@ pub trait Voting {
         self.voting_names().insert(vote_name.clone());
     }
     // Func for adding vip with a bigger value
-    #[only_owner]
     #[endpoint]
     fn add_vip(&self, addr: ManagedAddress, value: u64 ,vote_name: &ManagedBuffer) {
+        let _caller = self.blockchain().get_caller();
+        let owner = self.vote_owner(vote_name.clone()).get();
+        require!(
+            _caller == owner,
+            "Unauthorised Operation"
+        );
         require!(!self.vip(vote_name.clone()).contains_key(&addr), "Vip already added!");
         self.vip(vote_name.clone()).insert(addr, value);
     } 
@@ -36,9 +41,10 @@ pub trait Voting {
         let caller = self.blockchain().get_caller();
         require!(!self.participants(vote_name.clone()).contains(&caller), "You have already voted!");
         //check deadline
-        let round = self.blockchain().get_block_round();
+        // let round = self.blockchain().get_block_round();
+        let current_timestamp = self.blockchain().get_block_timestamp();
         let ddl = self.deadline(vote_name.clone()).get();
-//        require!(ddl > round , "Voting closed, ddl reached!");
+        require!(ddl > current_timestamp , "Voting closed, ddl reached!");
         require!(self.number_of_options(vote_name.clone()).get() >= voting_index , "Voting number too high!");
         require!(voting_index > 0 , "Voting number too low!");
         let original_value = self.voting_status(vote_name.clone()).get_node_by_id(voting_index as u32);

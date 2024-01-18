@@ -23,18 +23,18 @@ multiversx_sc_wasm_adapter::endpoints! {
     (
         init => init
         upgrade => upgrade
-        set_values => set_values
+        create_vote => create_vote
         add_vip => add_vip
         vote => vote
         calculate_result => calculate_result
-        reset_vote => reset_vote
         getDeadline => deadline
         getNumberOfOptions => number_of_options
-        getNames => names
         getParticipants => participants
         getStatus => voting_status
         getResult => result
         getVip => vip
+        getvotingnames => voting_names
+        getVoteOwner => vote_owner
     )
 }
 

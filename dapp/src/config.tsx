@@ -1,7 +1,8 @@
 export const contractAddress =
   // 'erd1qqqqqqqqqqqqqpgqas27r2nsqyusd7vmghk5ws9m5gwnxq06fgdqxxvgpj';
   // 'erd1qqqqqqqqqqqqqpgq03ck06p4s9dte8y55de74r5vuhs3prd7fgdq4vvah7';
-  'erd1qqqqqqqqqqqqqpgqe8kja6wx3hheus2n7rwdyv4f3tx0kd64fgdqp8anpj';
+  // 'erd1qqqqqqqqqqqqqpgqe8kja6wx3hheus2n7rwdyv4f3tx0kd64fgdqp8anpj';
+  'erd1qqqqqqqqqqqqqpgqvcdrwauhmrwrg6ahjk63t35dflldv78rzttqg4qs7c  ';
 
 export const dAppName = 'Voting Platform';
 
