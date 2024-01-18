@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faArrowDown, faSquarePollVertical, faCrown, faStamp, faCircleDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
 import { Button } from 'components/Button';
+import { ButtonModal } from 'components/Button';
 import { ContractAddress } from 'components/ContractAddress';
 import { OutputContainer, PingPongOutput } from 'components/OutputContainer';
 import { useGetTimeToPong, useGetPingAmount } from './hooks';
@@ -25,7 +26,7 @@ const modalStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    width: '300px', // Adjust the width to your preference
+    width: '400px', // Adjust the width to your preference
     minHeight: '400px', // Adjust the height to your preference
     padding: '20px',
     borderRadius: '10px',
@@ -33,6 +34,14 @@ const modalStyles = {
     boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.75)'
   }
 };
+
+const modalFieldStyles = {
+  content: {
+    border: "1px solid #ccc",
+    padding: "10px",
+    borderRadius: "5px"
+  }
+}
 
 function decimalToHexadecimal(decimalStr: string): string {
   const decimalValue = parseInt(decimalStr, 10); // Parse the decimal string to an integer
@@ -104,8 +113,9 @@ const CreateVoteModal: React.FC<{
       style={modalStyles}
       contentLabel='Create Vote Modal'
     >
-      <h2>Create Vote</h2>
-      <div className="modal-content">
+
+      <div className="flex flex-col gap-6">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#637bad' }}>Create Vote</h2>
         {/* Individual fields with borders */}
         <div className="modal-field">
           <label>Vote name:</label>
@@ -136,18 +146,27 @@ const CreateVoteModal: React.FC<{
           <DatePicker
             selected={selectedDate}
             onChange={(date: Date | null) => setSelectedDate(date)}
+            showTimeSelect
+            timeIntervals={5}
             dateFormat='MM/dd/yyyy HH:mm:ss'
             placeholderText='Select Deadline Date'
+            withPortal
+            portalId="customDatePickerPortal" // Provide a unique ID for the portal
+            popperModifiers={{
+              preventOverflow: { enabled: true, escapeWithReference: false, boundariesElement: 'viewport' },
+            }}
+            // Add a custom style to ensure it's outside the modal
+            style={{ position: 'absolute', zIndex: 9999 }}
           />
         </div>
         {/* Buttons with left and right alignment */}
-        <div className="modal-buttons" style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button onClick={handleCreateVote} className="create-button">
+        <div className="flex justify-start gap-10">
+          <ButtonModal onClick={handleCreateVote} >
             Create Vote
-          </Button>
-          <Button onClick={onClose} className="cancel-button">
+          </ButtonModal>
+          <ButtonModal onClick={onClose}>
             Cancel
-          </Button>
+          </ButtonModal>
         </div>
       </div>
     </Modal>
@@ -182,8 +201,8 @@ const VoteModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-      <h2>Vote</h2>
-      <div className="modal-content">
+      <div className="flex flex-col gap-6">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#637bad' }}>Vote</h2>
         <div className="modal-field">
           <label>Vote Name:</label>
           <input
@@ -204,13 +223,13 @@ const VoteModal: React.FC<{
             onChange={handleInputChange2}
           />
         </div>
-        <div className="modal-buttons">
-          <Button onClick={handleVote} className="left-button">
+        <div className="flex justify-start gap-10">
+          <ButtonModal onClick={handleVote} >
             Vote
-          </Button>
-          <Button onClick={onClose} className="right-button">
+          </ButtonModal>
+          <ButtonModal onClick={onClose} >
             Cancel
-          </Button>
+          </ButtonModal>
         </div>
       </div>
     </Modal>
@@ -239,8 +258,8 @@ const ResultModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-      <h2>Enter the Vote Name</h2>
-      <div className="modal-content">
+      <div className="flex flex-col gap-6">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#637bad' }}>Enter the Vote Name</h2>
         <div className="modal-field">
           <label>Vote Name:</label>
           <input
@@ -252,13 +271,13 @@ const ResultModal: React.FC<{
             minLength={3}
           />
         </div>
-        <div className="modal-buttons">
-          <Button onClick={handleResult} className="left-button">
+        <div className="flex justify-start gap-10">
+          <ButtonModal onClick={handleResult} >
             Result
-          </Button>
-          <Button onClick={onClose} className="right-button">
+          </ButtonModal>
+          <ButtonModal onClick={onClose} >
             Cancel
-          </Button>
+          </ButtonModal>
         </div>
       </div>
     </Modal>
@@ -298,8 +317,8 @@ const VipSomebodyModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-      <h2>Vip Somebody</h2>
-      <div className="modal-content">
+      <div className="flex flex-col gap-6">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#637bad' }}>Vip Somebody</h2>
         <div className="modal-field">
           <label>VIP Address:</label>
           <input
@@ -329,13 +348,13 @@ const VipSomebodyModal: React.FC<{
             onChange={handleInputChange3}
           />
         </div>
-        <div className="modal-buttons">
-          <Button onClick={handleSetVip} className="left-button">
+        <div className="flex justify-start gap-10">
+          <ButtonModal onClick={handleSetVip} >
             Set VIP
-          </Button>
-          <Button onClick={onClose} className="right-button">
+          </ButtonModal>
+          <ButtonModal onClick={onClose} >
             Cancel
-          </Button>
+          </ButtonModal>
         </div>
       </div>
     </Modal>
@@ -370,8 +389,8 @@ const VipYourselfModal: React.FC<{
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onClose} style={modalStyles}>
-      <h2>Vip Yourself</h2>
-      <div className="modal-content">
+      <div className="flex flex-col gap-6">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#637bad' }}>Vip Yourself</h2>
         <div className="modal-field">
           <label>Voting Power:</label>
           <input
@@ -390,13 +409,13 @@ const VipYourselfModal: React.FC<{
             onChange={handleInputChange3}
           />
         </div>
-        <div className="modal-buttons">
-          <Button onClick={handleSetVip2} className="left-button">
+        <div className="flex justify-start gap-10">
+          <ButtonModal onClick={handleSetVip2} >
             Set VIP
-          </Button>
-          <Button onClick={onClose} className="right-button">
+          </ButtonModal>
+          <ButtonModal onClick={onClose} >
             Cancel
-          </Button>
+          </ButtonModal>
         </div>
       </div>
     </Modal>
@@ -454,7 +473,7 @@ export const PingPongRaw = () => {
   const Vote = async (arg1: string, arg2: string) => {
     const mintTransaction = {
       value: '0',
-      data: 'vote' + '@' + arg1 + '@' + arg2,
+      data: 'vote' + '@' + arg2 + '@' + arg1,
       receiver: contractAddress,
       gasLimit: '600000000'
     };
@@ -530,7 +549,7 @@ export const PingPongRaw = () => {
             data-testid='btnPingService'
             data-cy='transactionBtn'
           >
-            <FontAwesomeIcon icon={faArrowUp} className='mr-1' />
+            <FontAwesomeIcon icon={faSquarePollVertical} className='mr-1' />
             Create Vote
           </Button>
           <CreateVoteModal
@@ -544,7 +563,7 @@ export const PingPongRaw = () => {
             data-testid='btnPingService'
             data-cy='transactionBtn'
           >
-            <FontAwesomeIcon icon={faArrowDown} className='mr-1' />
+            <FontAwesomeIcon icon={faStamp} className='mr-1' />
             Vote
           </Button>
           <VoteModal
@@ -558,7 +577,7 @@ export const PingPongRaw = () => {
             data-testid='btnPingService'
             data-cy='transactionBtn'
           >
-            <FontAwesomeIcon icon={faArrowDown} className='mr-1' />
+            <FontAwesomeIcon icon={faCrown} className='mr-1' />
             VIP Yourself
           </Button>
           <VipYourselfModal
@@ -572,7 +591,7 @@ export const PingPongRaw = () => {
             data-testid='btnPingService'
             data-cy='transactionBtn'
           >
-            <FontAwesomeIcon icon={faArrowDown} className='mr-1' />
+            <FontAwesomeIcon icon={faCrown} className='mr-1' />
             VIP Somebody
           </Button>
           <VipSomebodyModal
@@ -586,7 +605,7 @@ export const PingPongRaw = () => {
             data-testid='btnPingService'
             data-cy='transactionBtn'
           >
-            <FontAwesomeIcon icon={faArrowDown} className='mr-1' />
+            <FontAwesomeIcon icon={faCircleDown} className='mr-1' />
             Get Result
           </Button>
           <ResultModal

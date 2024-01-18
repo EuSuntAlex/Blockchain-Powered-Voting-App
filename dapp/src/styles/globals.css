@@ -23,3 +23,9 @@
 .mx-transactions td > div > a {
   @apply text-blue-600;
 }
+
+.modal-field {
+  border: 1px solid #ccc; /* Border color and width */
+  padding: 10px; /* Optional: Add padding for better visual appearance */
+  border-radius: 5px; /* Optional: Add border radius for rounded corners */
+}
